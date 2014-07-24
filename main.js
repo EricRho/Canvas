@@ -5,6 +5,14 @@ $(document).ready(function(){
 var CanvasApp = {
   init : function(){
     this.$canvas = $('#myCanvas');
-    alert('Here');
+    this.$inputText = $('#image-url');
+    this.$submitBtn = $('#submitBtn');
+
+    this.$submitBtn.submit(function(){
+      var context = $this.$canvas.getContext('2d');
+      var image = new Image();
+      image.src = this.$inputText.val();
+      context.drawImage(image, 0, 0);
+    });
   }
 };
