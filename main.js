@@ -18,10 +18,11 @@ var CanvasApp = {
     var canvas = document.getElementById('myCanvas');
     var context = canvas.getContext('2d');
     var imageObj = new Image();
+    imageObj.src = this.$inputText.val();
 
     imageObj.onload = function() {
-      context.drawImage(imageObj, 69, 50);
+      var bestHeight = (578 * imageObj.height) / imageObj.width;
+      context.drawImage(imageObj, 0, 0, 578, bestHeight);
     };
-    imageObj.src = this.$inputText.val();
   }
 };
