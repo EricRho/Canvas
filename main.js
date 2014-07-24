@@ -25,7 +25,7 @@ var CanvasApp = {
 
     this.canvas.onmousemove = function(event){
       if (that.paint) {
-        that.addClick(event.pageX - this.offsetLeft, event.pageY - this.offsetTop);
+        that.addClick(event.pageX - this.offsetLeft, event.pageY - this.offsetTop, true);
         that.redraw();
       }
     };
@@ -47,12 +47,16 @@ var CanvasApp = {
   loadImage : function(){
     var context = this.canvas.getContext('2d');
     var imageObj = new Image();
-    imageObj.src = this.$inputText.val();
+    var imgsrc = this.$inputText.val();
 
-    imageObj.onload = function() {
-      var bestHeight = (578 * imageObj.height) / imageObj.width;
-      context.drawImage(imageObj, 0, 0, 578, bestHeight);
-    };
+    $('#myCanvas').attr({
+      style: 'background: url(' + imgsrc + ")"
+    });
+
+    // imageObj.onload = function() {
+    //   var bestHeight = (578 * imageObj.height) / imageObj.width;
+    //   context.drawImage(imageObj, 0, 0, 578, bestHeight);
+    // };
   },
 
   addClick : function(x, y, dragging){
@@ -62,9 +66,11 @@ var CanvasApp = {
   },
 
   redraw : function(){
+
     var context = this.canvas.getContext('2d');
     context.clearRect(0, 0, context.canvas.width, context.canvas.height);
-    context.strokeStyle = "#ffffff";
+    this.loadImage();
+    context.strokeStyle = "#000000";
     context.lineJoin = "round";
     context.lineWidth = 5;
 
