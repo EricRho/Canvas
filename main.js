@@ -4,23 +4,25 @@ $(document).ready(function(){
 
 var CanvasApp = {
   init : function(){
-    this.canvas = document.getElementById('myCanvas');
+    this.canvas = document.getElementById('#myCanvas');
     this.$inputText = $('#image-url');
     this.$submitBtn = $('#submitBtn');
 
-    var that = this;
-    this.$submitBtn.click(function(){
-      that.loadImage(that.$inputText.val());
+    this.$submitBtn.click(function(event){
+      CanvasApp.loadImage();
+      event.preventDefault();
     });
   },
 
-  loadImage : function(url){
-    var context = this.canvas.getContext('2d');
+  loadImage : function(){
+    var canvas = document.getElementById('myCanvas');
+    var context = canvas.getContext('2d');
     var imageObj = new Image();
+    imageObj.src = this.$inputText.val();
 
     imageObj.onload = function() {
-      context.drawImage(imageObj, 0, 0, 578, 400);
+      var bestHeight = (578 * imageObj.height) / imageObj.width;
+      context.drawImage(imageObj, 0, 0, 578, bestHeight);
     };
-    imageObj.src = url;
   }
 };
