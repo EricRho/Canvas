@@ -4,15 +4,44 @@ $(document).ready(function(){
 
 var CanvasApp = {
   init : function(){
+    this.clickX = [];
+    this.clickY = [];
+    this.clickDrag = [];
+    this.paint = false;
+
     this.canvas = document.getElementById('myCanvas');
     this.$inputText = $('#image-url');
     this.$submitBtn = $('#submitBtn');
 
+    var that = this;
+    this.canvas.onmousedown = function(event) {
+      var mouseX = event.pageX - this.offsetLeft;
+      var mouseY = event.pageY - this.offsetTop;
+
+      that.paint = true;
+      that.addClick(event.pageX - this.offsetLeft, event.pageY - this.offsetTop);
+      that.redraw();
+    };
+
+    this.canvas.onmousemove = function(event){
+      if (that.paint) {
+        that.addClick(event.pageX - this.offsetLeft, event.pageY - this.offsetTop);
+        that.redraw();
+      }
+    };
+
+    this.canvas.onmouseup = function(){
+      that.paint = false;
+    };
+
+    this.canvas.onmouseleave = function() {
+      that.paint = false;
+    };
+
     this.$submitBtn.click(function(event){
-      CanvasApp.loadImage();
+      that.loadImage();
       event.preventDefault();
     });
-    this.doodle();
   },
 
   loadImage : function(){
@@ -26,58 +55,30 @@ var CanvasApp = {
     };
   },
 
-  doodle: function() {
-    var $canvas = $('#myCanvas');
-    var clickX = [];
-    var clickY = [];
-    var clickDrag = [];
-    var paint;
-
-    function addClick(x, y, dragging) {
-      clickX.push(x);
-      clickY.push(y);
-      clickDrag.push(dragging);
-    }
-
-    function redraw() {
-      context.clearRect(0, 0, context.canvas.width, context.canvas.height);
-      context.strokeStyle = "#ffffff";
-      context.lineJoin = "round";
-      context.lineWidth = 5;
-
-      clickX.forEach(function(elem, index) {
-        context.beginPath();
-        if(clickDrag[index]) {
-          context.moveTo(clickX[index-1], clickY[index-1]);
-        } else {
-          context.moveTo(elem, clickY[index]);
-        }
-        context.lineTo(elem, clickY[index]);
-        context.closePath();
-        context.stroke();
-      });
-    }
-
-    $canvas.mousedown(function(event) {
-      var mouseX = event.pageX - this.offsetLeft;
-      var mouseY = event.pageY - this.offsetTop;
-      paint = true;
-      addClick(event.pageX - this.offsetLeft, event.pageY - this.offsetTop);
-      redraw();
-    });
-    $canvas.mousemove(function(event) {
-      if (paint) {
-        addClick(event.pageX - this.offsetLeft, event.pageY - this.offsetTop);
-        redraw();
-      }
-    });
-    $canvas.mouseup(function(event) {
-      paint = false;
-    });
-    $canvas.mouseleave(function(event) {
-      paint = false;
-    });
-
+  addClick : function(x, y, dragging){
+    this.clickX.push(x);
+    this.clickY.push(y);
+    this.clickDrag.push(dragging);
   },
 
+  redraw : function(){
+    var context = this.canvas.getContext('2d');
+    context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+    context.strokeStyle = "#ffffff";
+    context.lineJoin = "round";
+    context.lineWidth = 5;
+
+    var that = this;
+    for(var i = 0; i < this.clickX.length; i++) {
+      context.beginPath();
+      if(this.clickDrag[i] && i) {
+        context.moveTo(this.clickX[i - 1], this.clickY[i - 1]);
+      } else {
+        context.moveTo(this.clickX[i] - 1, this.clickY[i]);
+      }
+      context.lineTo(this.clickX[i], this.clickY[i]);
+      context.closePath();
+      context.stroke();
+    }
+  }
 };
